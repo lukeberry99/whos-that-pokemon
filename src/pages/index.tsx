@@ -187,7 +187,7 @@ const Home: NextPage = () => {
             It's case insensitive, go mad.
           </span>
           <span className="italic text-xs text-gray-500 mt-1">
-            Spelling is really important
+            Spelling is kinda important but not super important
           </span>
         </div>
       </div>
