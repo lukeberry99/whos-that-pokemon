@@ -5,7 +5,12 @@ import { trpc } from "../utils/trpc"
 import Image from "next/image"
 
 const Home: NextPage = () => {
-  const pokemonId = useMemo(() => getRandomPokemonId(), [])
+  const { invalidateQueries } = trpc.useContext()
+  const [pokemonId, setPokemonId] = useState(getRandomPokemonId())
+  const [scoreCounter, setScoreCounter] = useState(0)
+  const [showLostMessage, setShowLostMessage] = useState(false)
+
+  useMemo(() => getRandomPokemonId(), [])
 
   const [name, setName] = useState("")
 
@@ -16,12 +21,28 @@ const Home: NextPage = () => {
     },
   ])
 
-  const methods = trpc.useMutation("make-guess")
+  const makeGuess = trpc.useMutation("make-guess", {
+    onSuccess: data => {
+      if (data.success) {
+        setScoreCounter(scoreCounter + 1)
+      } else {
+        setShowLostMessage(true)
+      }
+    },
+  })
 
   const onGuess = async () => {
     if (!data) return
 
-    methods.mutate({
+    let newPokemonId = getRandomPokemonId()
+    if (newPokemonId === pokemonId) {
+      newPokemonId = getRandomPokemonId()
+    }
+
+    setPokemonId(newPokemonId)
+    setName("")
+
+    makeGuess.mutate({
       id: data.id,
       name,
     })
@@ -31,24 +52,36 @@ const Home: NextPage = () => {
     <>
       <h1 className="text-3xl">Who's that pokemon?</h1>
       <p>How many can you get right in a row?</p>
+      <h1>{scoreCounter}</h1>
       {!data && <p>Loading...</p>}
       {data && (
         <>
           <Image src={data.pictureUrl} width={256} height={256} />
+          {data.name && <p>{data.name}</p>}
         </>
       )}
-      <input
-        type="text"
-        name="name"
-        id="name"
-        className="p-4 border shadow-md"
-        placeholder="Pokemon name..."
-        value={name}
-        onChange={e => setName(e.target.value)}
-      />
-      <button className="p-4 border shadow-md" onClick={onGuess}>
-        Guess
-      </button>
+      <form
+        onSubmit={e => {
+          e.preventDefault()
+          onGuess()
+        }}
+      >
+        <input
+          type="text"
+          name="name"
+          id="name"
+          className="p-4 border shadow-md"
+          placeholder="Pokemon name..."
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
+        <button className="p-4 border shadow-md" onClick={onGuess}>
+          Guess
+        </button>
+      </form>
+      {makeGuess.data && (
+        <p>{makeGuess.data.success ? "YO YOU GOT IT" : "YOU'RE SHIT"}</p>
+      )}
     </>
   )
 }

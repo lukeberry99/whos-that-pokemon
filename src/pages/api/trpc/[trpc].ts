@@ -23,16 +23,10 @@ export const appRouter = createRouter()
       name: z.string(),
     }),
     async resolve({ input }) {
-      const result = await guessThatPokemon(input.id, input.name)
+      const result = await guessThatPokemon(input.id, input.name.toLowerCase())
 
-      if (result) {
-        return {
-          message: "Correct",
-        }
-      } else {
-        return {
-          message: "Wrong",
-        }
+      return {
+        success: result,
       }
     },
   })
@@ -48,15 +42,10 @@ const guessThatPokemon = async (id: string, name: string) => {
   })
 
   if (!poke) {
-    console.error("NO POKEMON? EHH")
     return false
   }
 
-  if (poke.name === name) {
-    return true
-  }
-
-  return false
+  return poke.name === name
 }
 
 const createOrFetchPokemon = async (pokedexId: number) => {
@@ -67,6 +56,7 @@ const createOrFetchPokemon = async (pokedexId: number) => {
     select: {
       id: true,
       pictureUrl: true,
+      name: !process.env.VERCEL,
     },
   })
 
@@ -84,6 +74,7 @@ const createOrFetchPokemon = async (pokedexId: number) => {
       select: {
         id: true,
         pictureUrl: true,
+        name: !process.env.VERCEL,
       },
     })
 
