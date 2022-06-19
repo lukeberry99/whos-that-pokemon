@@ -165,6 +165,9 @@ const Home: NextPage = () => {
           <span className="italic text-sm text-gray-500">
             It's case insensitive, go mad.
           </span>
+          <span className="italic text-xs text-gray-500 mt-1">
+            Spelling is really important
+          </span>
         </div>
       </div>
     </div>
