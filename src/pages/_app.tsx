@@ -12,6 +12,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <Head>
         <title>Guess the Pokémon</title>
         <meta name="description" content="Can you guess all 151 original Pokémon" />
+        <script defer data-domain="pokemon.luke-berry.co.uk" src="https://plausible.io/js/plausible.js"></script>
       </Head>
       <Component {...pageProps} />
     </>
