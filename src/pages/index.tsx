@@ -56,11 +56,15 @@ const Home: NextPage = () => {
 
     setName("")
 
-    plausible("guess-pokemon")
-
     await makeGuess.mutateAsync({
       id: data.id,
       name,
+    })
+
+    plausible("guess-pokemon", {
+      props: {
+        currentScore: scoreCounter,
+      },
     })
   }
 
