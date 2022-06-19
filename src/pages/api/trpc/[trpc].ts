@@ -24,7 +24,7 @@ export const appRouter = createRouter()
       name: z.string(),
     }),
     async resolve({ input }) {
-      const result = await guessThatPokemon(input.id, input.name.toLowerCase())
+      const result = await guessThatPokemon(input.id, input.name.trim().toLowerCase())
 
       return {
         success: result.success,
