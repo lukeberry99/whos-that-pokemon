@@ -5,8 +5,6 @@ import { createContext } from "../../../server/context"
 import { createRouter } from "../../../server/create-router"
 
 import { prisma } from "../../../server/db"
-import { MainClient } from "pokenode-ts"
-import getRandomPokemonId from "../../../utils/get-random-pokemon-id"
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -58,32 +56,7 @@ const createOrFetchPokemon = async (pokedexId: number) => {
     },
   })
 
-  if (!poke) {
-    const api = new MainClient()
-    let pokemon
-    try {
-      pokemon = await api.pokemon.getPokemonById(pokedexId)
-    } catch (err) {
-      return false
-    }
-
-    const result = await prisma.pokemon.create({
-      data: {
-        pokedexId,
-        name: pokemon.name,
-        generation: 0,
-        pictureUrl: pokemon.sprites.front_default || "",
-      },
-      select: {
-        id: true,
-        pictureUrl: true,
-        name: !process.env.VERCEL,
-      },
-    })
-
-    return result
-  }
-  return poke
+   return poke
 }
 
 // export type definition of API

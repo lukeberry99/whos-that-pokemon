@@ -71,6 +71,8 @@ const Home: NextPage = () => {
     setCorrectPokemonName("")
     setWonGame(false)
     setShowLostMessage(false)
+
+    plausible("restart-game")
   }
 
   return (
