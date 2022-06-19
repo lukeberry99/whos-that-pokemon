@@ -6,6 +6,8 @@ import Image from "next/image"
 import Hearts from "../../public/hearts.svg"
 import { usePlausible } from "next-plausible"
 
+import { AiFillGithub, AiFillTwitterCircle } from "react-icons/ai"
+
 const Home: NextPage = () => {
   const [scoreCounter, setScoreCounter] = useState(0)
   const [showLostMessage, setShowLostMessage] = useState(false)
@@ -104,8 +106,8 @@ const Home: NextPage = () => {
           <p className="sm:text-3xl text-xl mt-2">Your Score: {scoreCounter}</p>
           {wonGame && (
             <div className="flex items-center justify-center flex-col my-4">
-              <h1 className="text-2xl">
-                Well... Shit... I didn't really plan for anyone to win...
+              <h1 className="sm:text-2xl text-md">
+                Congrats! Well done on winning.
               </h1>
               <button
                 onClick={restartGame}
@@ -128,13 +130,15 @@ const Home: NextPage = () => {
                       </span>
                     </h3>
                     <div className="flex space-x-4 items-center">
-                    <button
-                      onClick={restartGame}
-                      className="p-4 bg-gray-50 shadow-sm border my-4"
-                    >
-                      Try again?
-                    </button>
-                    <p className="text-gray-500 text-sm italic">Press Enter to restart</p>
+                      <button
+                        onClick={restartGame}
+                        className="p-4 bg-gray-50 shadow-sm border my-4"
+                      >
+                        Try again?
+                      </button>
+                      <p className="text-gray-500 text-sm italic">
+                        Press Enter to restart
+                      </p>
                     </div>
                   </div>
                 )}
@@ -186,6 +190,24 @@ const Home: NextPage = () => {
             It's case insensitive, go mad.
           </span>
         </div>
+      </div>
+      <div className="flex items-center justify-center py-4 space-x-4">
+        <a
+          href="https://github.com/lukeberry99/whos-that-pokemon"
+          onClick={() => plausible("github-link-clicked")}
+          target="_BLANK"
+          rel="noreferrer"
+        >
+          <AiFillGithub size={32} color={"white"} />
+        </a>
+        <a
+          href="https://twitter.com/lukeberry99"
+          onClick={() => plausible("twitter-link-clicked")}
+          target="_BLANK"
+          rel="noreferrer"
+        >
+          <AiFillTwitterCircle size={32} color={"white"} />
+        </a>
       </div>
     </div>
   )
