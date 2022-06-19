@@ -16,12 +16,21 @@ const Home: NextPage = () => {
   const [wonGame, setWonGame] = useState(false)
   const [name, setName] = useState("")
 
-  const { data } = trpc.useQuery([
-    "get-pokemon-by-id",
+  const { data } = trpc.useQuery(
+    [
+      "get-pokemon-by-id",
+      {
+        id: pokemonId,
+      },
+    ],
     {
-      id: pokemonId,
-    },
-  ])
+      onSuccess: data => {
+        if (data === false) {
+          setPokemonId(getRandomPokemonId(answeredPokemon))
+        }
+      },
+    }
+  )
 
   const makeGuess = trpc.useMutation("make-guess", {
     onSuccess: data => {
@@ -40,7 +49,7 @@ const Home: NextPage = () => {
   })
 
   const onGuess = async () => {
-    if (!data || !name) return
+    if (data === undefined || !data || !name) return
 
     setName("")
 
@@ -66,11 +75,15 @@ const Home: NextPage = () => {
           <h1 className="sm:text-5xl text-2xl text-center">
             Guess the Pokémon
           </h1>
-            <p className="text-gray-500 text-md mb-4">Can you guess all 151 original pokemon?</p>
+          <p className="text-gray-500 text-md mb-4">
+            Can you guess all 151 original pokemon?
+          </p>
           <p className="sm:text-3xl text-xl mt-2">Your Score: {scoreCounter}</p>
           {wonGame && (
             <div className="flex items-center justify-center flex-col my-4">
-              <h1 className="text-2xl">Well... Shit... I didn't really plan for anyone to win...</h1>
+              <h1 className="text-2xl">
+                Well... Shit... I didn't really plan for anyone to win...
+              </h1>
               <button
                 onClick={restartGame}
                 className="p-4 bg-gray-50 shadow-sm border my-4"
@@ -82,7 +95,6 @@ const Home: NextPage = () => {
           {showLostMessage && (
             <>
               <div>
-                {!data && <Image src={Hearts} width={256} height={256} className="text-pink-300"/>}
                 {data && (
                   <div className="flex items-center justify-center flex-col">
                     <Image src={data.pictureUrl} width={256} height={256} />
@@ -106,7 +118,14 @@ const Home: NextPage = () => {
           {!showLostMessage && !wonGame && (
             <>
               <div>
-                {!data && <Image src={Hearts} width={256} height={256} />}
+                {data === undefined && (
+                  <Image
+                    src={Hearts}
+                    width={256}
+                    height={256}
+                    className="text-pink-300"
+                  />
+                )}
                 {data && (
                   <>
                     <Image src={data.pictureUrl} width={256} height={256} />

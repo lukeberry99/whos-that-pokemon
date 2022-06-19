@@ -6,6 +6,7 @@ import { createRouter } from "../../../server/create-router"
 
 import { prisma } from "../../../server/db"
 import { MainClient } from "pokenode-ts"
+import getRandomPokemonId from "../../../utils/get-random-pokemon-id"
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -59,7 +60,12 @@ const createOrFetchPokemon = async (pokedexId: number) => {
 
   if (!poke) {
     const api = new MainClient()
-    const pokemon = await api.pokemon.getPokemonById(pokedexId)
+    let pokemon
+    try {
+      pokemon = await api.pokemon.getPokemonById(pokedexId)
+    } catch (err) {
+      return false
+    }
 
     const result = await prisma.pokemon.create({
       data: {
