@@ -1,0 +1,102 @@
+import * as trpcNext from "@trpc/server/adapters/next"
+import superjson from "superjson"
+import { z } from "zod"
+import { createContext } from "../../../server/context"
+import { createRouter } from "../../../server/create-router"
+
+import { prisma } from "../../../server/db"
+import { MainClient } from "pokenode-ts"
+
+export const appRouter = createRouter()
+  .transformer(superjson)
+  .query("get-pokemon-by-id", {
+    input: z.object({
+      id: z.number(),
+    }),
+    async resolve({ input }) {
+      return await createOrFetchPokemon(input.id)
+    },
+  })
+  .mutation("make-guess", {
+    input: z.object({
+      id: z.string(),
+      name: z.string(),
+    }),
+    async resolve({ input }) {
+      const result = await guessThatPokemon(input.id, input.name)
+
+      if (result) {
+        return {
+          message: "Correct",
+        }
+      } else {
+        return {
+          message: "Wrong",
+        }
+      }
+    },
+  })
+
+const guessThatPokemon = async (id: string, name: string) => {
+  const poke = await prisma.pokemon.findFirst({
+    where: {
+      id,
+    },
+    select: {
+      name: true,
+    },
+  })
+
+  if (!poke) {
+    console.error("NO POKEMON? EHH")
+    return false
+  }
+
+  if (poke.name === name) {
+    return true
+  }
+
+  return false
+}
+
+const createOrFetchPokemon = async (pokedexId: number) => {
+  const poke = await prisma.pokemon.findFirst({
+    where: {
+      pokedexId,
+    },
+    select: {
+      id: true,
+      pictureUrl: true,
+    },
+  })
+
+  if (!poke) {
+    const api = new MainClient()
+    const pokemon = await api.pokemon.getPokemonById(pokedexId)
+
+    const result = await prisma.pokemon.create({
+      data: {
+        pokedexId,
+        name: pokemon.name,
+        generation: 0,
+        pictureUrl: pokemon.sprites.front_default || "",
+      },
+      select: {
+        id: true,
+        pictureUrl: true,
+      },
+    })
+
+    return result
+  }
+  return poke
+}
+
+// export type definition of API
+export type AppRouter = typeof appRouter
+
+// export API handler
+export default trpcNext.createNextApiHandler({
+  router: appRouter,
+  createContext: createContext,
+})
