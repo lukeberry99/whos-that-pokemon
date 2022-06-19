@@ -1,5 +1,5 @@
 import type { NextPage } from "next"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import getRandomPokemonId from "../utils/get-random-pokemon-id"
 import { trpc } from "../utils/trpc"
 import Image from "next/image"
@@ -73,6 +73,23 @@ const Home: NextPage = () => {
     setWonGame(false)
     setShowLostMessage(false)
   }
+
+  const handleKeyPress = useCallback(
+    (event: KeyboardEvent) => {
+      if (showLostMessage === true && event.key === "Enter") {
+        restartGame()
+      }
+    },
+    [setShowLostMessage, showLostMessage]
+  )
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress)
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress)
+    }
+  }, [handleKeyPress, setShowLostMessage, showLostMessage])
 
   return (
     <div className="w-full h-full">
@@ -154,6 +171,7 @@ const Home: NextPage = () => {
                     placeholder="Pokemon name..."
                     value={name}
                     onChange={e => setName(e.target.value)}
+                    autoFocus
                   />
                   <button className="p-4 bg-gray-50" onClick={onGuess}>
                     Guess
