@@ -5,17 +5,20 @@ import { AppRouter } from "./api/trpc/[trpc]"
 import "../styles/globals.css"
 import "tailwindcss/tailwind.css"
 import Head from "next/head"
+import PlausibleProvider from "next-plausible"
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <>
+    <PlausibleProvider domain="pokemon.luke-berry.co.uk">
       <Head>
         <title>Guess the Pokémon</title>
-        <meta name="description" content="Can you guess all 151 original Pokémon" />
-        <script defer data-domain="pokemon.luke-berry.co.uk" src="https://plausible.io/js/plausible.js"></script>
+        <meta
+          name="description"
+          content="Can you guess all 151 original Pokémon"
+        />
       </Head>
       <Component {...pageProps} />
-    </>
+    </PlausibleProvider>
   )
 }
 
