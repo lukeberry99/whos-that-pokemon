@@ -4,9 +4,18 @@ import { AppType } from "next/dist/shared/lib/utils"
 import { AppRouter } from "./api/trpc/[trpc]"
 import "../styles/globals.css"
 import "tailwindcss/tailwind.css"
+import Head from "next/head"
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  return <Component {...pageProps} />
+  return (
+    <>
+      <Head>
+        <title>Guess the Pokémon</title>
+        <meta name="description" content="Can you guess all 151 original Pokémon" />
+      </Head>
+      <Component {...pageProps} />
+    </>
+  )
 }
 
 function getBaseUrl() {
