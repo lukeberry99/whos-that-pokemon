@@ -4,6 +4,7 @@ import getRandomPokemonId from "../utils/get-random-pokemon-id"
 import { trpc } from "../utils/trpc"
 import Image from "next/image"
 import Hearts from "../../public/hearts.svg"
+import { usePlausible } from "next-plausible"
 
 const Home: NextPage = () => {
   const [scoreCounter, setScoreCounter] = useState(0)
@@ -15,6 +16,8 @@ const Home: NextPage = () => {
   )
   const [wonGame, setWonGame] = useState(false)
   const [name, setName] = useState("")
+
+  const plausible = usePlausible()
 
   const { data } = trpc.useQuery(
     [
@@ -52,6 +55,8 @@ const Home: NextPage = () => {
     if (data === undefined || !data || !name) return
 
     setName("")
+
+    plausible("guess-pokemon")
 
     await makeGuess.mutateAsync({
       id: data.id,
