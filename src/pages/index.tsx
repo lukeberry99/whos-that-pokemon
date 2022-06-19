@@ -82,7 +82,7 @@ const Home: NextPage = () => {
           {showLostMessage && (
             <>
               <div>
-                {!data && <Image src={Hearts} width={256} height={256} />}
+                {!data && <Image src={Hearts} width={256} height={256} className="text-pink-300"/>}
                 {data && (
                   <div className="flex items-center justify-center flex-col">
                     <Image src={data.pictureUrl} width={256} height={256} />
