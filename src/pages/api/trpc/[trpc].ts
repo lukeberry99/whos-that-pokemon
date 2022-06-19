@@ -5,6 +5,7 @@ import { createContext } from "../../../server/context"
 import { createRouter } from "../../../server/create-router"
 
 import { prisma } from "../../../server/db"
+import levenshtein from "../../../utils/levenshtein"
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -41,7 +42,15 @@ const guessThatPokemon = async (id: string, name: string) => {
     },
   })
 
-  return { success: poke!.name === name, name: poke!.name }
+  const distance = levenshtein(name, poke!.name)
+
+  let correct = poke!.name === name
+
+  if(!correct && distance <= 1) {
+    correct = true
+  }
+
+  return { success: correct, name: poke!.name, distance: distance }
 }
 
 const createOrFetchPokemon = async (pokedexId: number) => {
