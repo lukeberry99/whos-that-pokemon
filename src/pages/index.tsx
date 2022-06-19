@@ -32,7 +32,7 @@ const Home: NextPage = () => {
         setScoreCounter(scoreCounter + 1)
         setAnsweredPokemon([...answeredPokemon, pokemonId])
         setPokemonId(getRandomPokemonId(answeredPokemon))
-        if (answeredPokemon.length === 151) {
+        if (scoreCounter === 151) {
           setWonGame(true)
         }
       } else {
