@@ -69,14 +69,18 @@ const Home: NextPage = () => {
   }
 
   const restartGame = () => {
+    plausible("restart-game", {
+      props: {
+        highScore: scoreCounter,
+      },
+    })
+
     setScoreCounter(0)
     setAnsweredPokemon([])
     setPokemonId(getRandomPokemonId([]))
     setCorrectPokemonName("")
     setWonGame(false)
     setShowLostMessage(false)
-
-    plausible("restart-game")
   }
 
   return (
