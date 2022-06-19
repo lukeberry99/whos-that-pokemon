@@ -4,8 +4,9 @@ import { z } from "zod"
 import { createContext } from "../../../server/context"
 import { createRouter } from "../../../server/create-router"
 
+import { distance } from "fastest-levenshtein"
+
 import { prisma } from "../../../server/db"
-import levenshtein from "../../../utils/levenshtein"
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -23,7 +24,10 @@ export const appRouter = createRouter()
       name: z.string(),
     }),
     async resolve({ input }) {
-      const result = await guessThatPokemon(input.id, input.name.trim().replace(' ', '-').toLowerCase())
+      const result = await guessThatPokemon(
+        input.id,
+        input.name.trim().replace(" ", "-").toLowerCase()
+      )
 
       return {
         success: result.success,
@@ -42,15 +46,15 @@ const guessThatPokemon = async (id: string, name: string) => {
     },
   })
 
-  const distance = levenshtein(name, poke!.name)
+  let success = false
 
-  let correct = poke!.name === name
-
-  if(!correct && distance <= 1) {
-    correct = true
+  if (poke!.name === name) {
+    success = true
+  } else if (distance(poke!.name, name) === 1) {
+    success = true
   }
 
-  return { success: correct, name: poke!.name, distance: distance }
+  return { success, name: poke!.name }
 }
 
 const createOrFetchPokemon = async (pokedexId: number) => {
@@ -65,7 +69,7 @@ const createOrFetchPokemon = async (pokedexId: number) => {
     },
   })
 
-   return poke
+  return poke
 }
 
 // export type definition of API
