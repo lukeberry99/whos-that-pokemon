@@ -66,6 +66,7 @@ const Home: NextPage = () => {
           <h1 className="sm:text-5xl text-2xl text-center">
             Guess the Pokémon
           </h1>
+            <p className="text-gray-500 text-md mb-4">Can you guess all 151 original pokemon?</p>
           <p className="sm:text-3xl text-xl mt-2">Your Score: {scoreCounter}</p>
           {wonGame && (
             <div className="flex items-center justify-center flex-col my-4">
