@@ -127,12 +127,15 @@ const Home: NextPage = () => {
                         {correctPokemonName}
                       </span>
                     </h3>
+                    <div className="flex space-x-4 items-center">
                     <button
                       onClick={restartGame}
                       className="p-4 bg-gray-50 shadow-sm border my-4"
                     >
                       Try again?
                     </button>
+                    <p className="text-gray-500 text-sm italic">You can press Enter to restart</p>
+                    </div>
                   </div>
                 )}
               </div>
