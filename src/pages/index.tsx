@@ -19,21 +19,12 @@ const Home: NextPage = () => {
 
   const plausible = usePlausible()
 
-  const { data } = trpc.useQuery(
-    [
-      "get-pokemon-by-id",
-      {
-        id: pokemonId,
-      },
-    ],
+  const { data } = trpc.useQuery([
+    "get-pokemon-by-id",
     {
-      onSuccess: data => {
-        if (data === false) {
-          setPokemonId(getRandomPokemonId(answeredPokemon))
-        }
-      },
-    }
-  )
+      id: pokemonId,
+    },
+  ])
 
   const makeGuess = trpc.useMutation("make-guess", {
     onSuccess: data => {
