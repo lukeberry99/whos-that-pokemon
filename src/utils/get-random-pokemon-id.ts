@@ -1,7 +1,11 @@
-const MAX_ID = 100
+const MAX_ID = 151
 
-const getRandomPokemonId =  () => {
+const getRandomPokemonId = (seenList: number[]): number => {
   const randomId = Math.floor(Math.random() * MAX_ID + 1 - 1)
+
+  if (seenList.includes(randomId)) {
+    return getRandomPokemonId(seenList)
+  }
 
   return randomId
 }

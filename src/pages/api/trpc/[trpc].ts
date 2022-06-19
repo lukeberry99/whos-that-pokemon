@@ -26,7 +26,8 @@ export const appRouter = createRouter()
       const result = await guessThatPokemon(input.id, input.name.toLowerCase())
 
       return {
-        success: result,
+        success: result.success,
+        name: result.name,
       }
     },
   })
@@ -41,11 +42,7 @@ const guessThatPokemon = async (id: string, name: string) => {
     },
   })
 
-  if (!poke) {
-    return false
-  }
-
-  return poke.name === name
+  return { success: poke!.name === name, name: poke!.name }
 }
 
 const createOrFetchPokemon = async (pokedexId: number) => {
