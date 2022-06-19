@@ -134,7 +134,7 @@ const Home: NextPage = () => {
                     >
                       Try again?
                     </button>
-                    <p className="text-gray-500 text-sm italic">You can press Enter to restart</p>
+                    <p className="text-gray-500 text-sm italic">Press Enter to restart</p>
                     </div>
                   </div>
                 )}
@@ -155,7 +155,6 @@ const Home: NextPage = () => {
                 {data && (
                   <>
                     <Image src={data.pictureUrl} width={256} height={256} />
-                    {data.name && <p className="text-center">{data.name}</p>}
                   </>
                 )}
               </div>
@@ -185,9 +184,6 @@ const Home: NextPage = () => {
           )}
           <span className="italic text-sm text-gray-500">
             It's case insensitive, go mad.
-          </span>
-          <span className="italic text-xs text-gray-500 mt-1">
-            Spelling is kinda important but not super important
           </span>
         </div>
       </div>

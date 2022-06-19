@@ -1,12 +1,20 @@
 import * as trpcNext from "@trpc/server/adapters/next"
 import superjson from "superjson"
+import { distance } from "fastest-levenshtein"
 import { z } from "zod"
+
 import { createContext } from "../../../server/context"
 import { createRouter } from "../../../server/create-router"
+import pokemonData from "./data.json"
 
-import { distance } from "fastest-levenshtein"
-
-import { prisma } from "../../../server/db"
+type Pokemon = {
+  id: string
+  createdAt?: string
+  pokedexId: number
+  generation?: number
+  name?: string
+  pictureUrl: string
+}
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -14,8 +22,8 @@ export const appRouter = createRouter()
     input: z.object({
       id: z.number(),
     }),
-    async resolve({ input }) {
-      return await createOrFetchPokemon(input.id)
+    resolve({ input }) {
+      return fetchPokemon(input.id)
     },
   })
   .mutation("make-guess", {
@@ -23,8 +31,8 @@ export const appRouter = createRouter()
       id: z.string(),
       name: z.string(),
     }),
-    async resolve({ input }) {
-      const result = await guessThatPokemon(
+    resolve({ input }) {
+      const result = guessThatPokemon(
         input.id,
         input.name.trim().replace(" ", "-").toLowerCase()
       )
@@ -36,40 +44,29 @@ export const appRouter = createRouter()
     },
   })
 
-const guessThatPokemon = async (id: string, name: string) => {
-  const poke = await prisma.pokemon.findFirst({
-    where: {
-      id,
-    },
-    select: {
-      name: true,
-    },
-  })
+const guessThatPokemon = (id: string, name: string) => {
+  const poke = pokemonData.filter(pokemon => pokemon.id === id)[0]!
 
   let success = false
 
-  if (poke!.name === name) {
+  if (poke.name === name) {
     success = true
-  } else if (distance(poke!.name, name) === 1) {
+  } else if (distance(poke.name, name) === 1) {
     success = true
   }
 
-  return { success, name: poke!.name }
+  return { success, name: poke.name }
 }
 
-const createOrFetchPokemon = async (pokedexId: number) => {
-  const poke = await prisma.pokemon.findFirst({
-    where: {
-      pokedexId,
-    },
-    select: {
-      id: true,
-      pictureUrl: true,
-      name: !process.env.VERCEL,
-    },
-  })
+const fetchPokemon = (pokedexId: number) => {
+  const poke: Pokemon = pokemonData.filter(
+    pokemon => pokemon.pokedexId === pokedexId
+  )[0]!
 
-  return poke
+  return {
+    id: poke.id,
+    pictureUrl: poke.pictureUrl,
+  }
 }
 
 // export type definition of API
